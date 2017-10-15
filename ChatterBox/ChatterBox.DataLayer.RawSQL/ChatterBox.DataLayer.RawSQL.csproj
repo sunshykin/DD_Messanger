@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8EEBEDB3-A36A-4F76-B1B8-DC2C078FAE2C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ChatterBox.DataLayer.RawSQL</RootNamespace>
+    <AssemblyName>ChatterBox.DataLayer.RawSQL</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AttachsRepository.cs" />
+    <Compile Include="AuthRepository.cs" />
+    <Compile Include="ChatsRepository.cs" />
+    <Compile Include="MessageRepository.cs" />
+    <Compile Include="UsersRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChatterBox.DataLayer\ChatterBox.DataLayer.csproj">
+      <Project>{20f72878-2a59-4707-a827-09dd2973a88b}</Project>
+      <Name>ChatterBox.DataLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Extentions\ChatterBox.Extentions.csproj">
+      <Project>{29b4ebd9-1504-45b1-bb5a-7d65d1d19063}</Project>
+      <Name>ChatterBox.Extentions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ChatterBox.Model\ChatterBox.Model.csproj">
+      <Project>{b144d466-b2d4-4fac-81a8-33bf0d512eea}</Project>
+      <Name>ChatterBox.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
