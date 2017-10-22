@@ -263,6 +263,8 @@ namespace ChatterBox.DataLayer.RawSQL
                 connection.Open();
                 foreach (var m in members)
                 {
+                    if (GetChatUsers(id).Any(u => u.Id == m))
+                        continue;
                     using (var command = connection.CreateCommand())
                     {
                         command.CommandText = "INSERT INTO ChatUsers (ChatId, UserId) " +

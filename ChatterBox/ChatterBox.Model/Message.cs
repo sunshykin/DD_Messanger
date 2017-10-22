@@ -30,9 +30,5 @@ namespace ChatterBox.Model
         /// Прикрепленные к сообщению файлы
         /// </summary>
         public IEnumerable<Attach> Attachs { get; set; }
-        /// <summary>
-        /// Чат, в который было отправлено сообщение
-        /// </summary>
-        public Chat Chat { get; set; }
     }
 }

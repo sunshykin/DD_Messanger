@@ -47,7 +47,7 @@ namespace ChatterBox.DataLayer.RawSQL
 
                         command.Parameters.AddWithValue("@id", result.Id);
                         command.Parameters.AddWithValue("@name", result.Name);
-                        command.Parameters.AddWithValue("@pic", result.Picture);
+                        command.Parameters.AddWithValue("@pic", result.Picture ?? "");
 
                         command.ExecuteNonQuery();
                     }
@@ -202,6 +202,11 @@ namespace ChatterBox.DataLayer.RawSQL
                     }
                 }
             }
+        }
+
+        public User SignIn(string login, string pass)
+        {
+            return _authRepository.SignIn(login, pass);
         }
     }
 }

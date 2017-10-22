@@ -12,6 +12,8 @@ namespace ChatterBox.DataLayer
         bool UserExists(Guid id);
         void ChangeLogin(Guid userid, string newLogin, string pass);
         void ChangePassword(Guid userid, string oldPassword, string newPassword);
+        User SignIn(string login, string pass);
+
 
         IEnumerable<Chat> GetUserChats(Guid userid);
     }

@@ -10,9 +10,7 @@ namespace ChatterBox.Extentions
     {
         public static bool IsEmpty(this string str)
         {
-            if (str == null || str.Trim(' ') == String.Empty)
-                return true;
-            return false;
+            return String.IsNullOrWhiteSpace(str);
         }
     }
 }

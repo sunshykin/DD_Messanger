@@ -53,12 +53,12 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             //act
             var repository = new UsersRepository(ConnectionString);
 
-            repository.Create(user, login, password);
-            repository.Delete(user.Id);
+            var resultUser = repository.Create(user, login, password);
+            repository.Delete(resultUser.Id);
 
             //asserts
-            Assert.AreEqual(repository.UserExists(user.Id), false);
-            Assert.AreEqual(new AuthRepository(ConnectionString).LoginExists(login), false);
+            Assert.AreEqual(false, repository.UserExists(resultUser.Id));
+            Assert.AreEqual(false, new AuthRepository(ConnectionString).LoginExists(login));
         }
 
         [TestMethod]

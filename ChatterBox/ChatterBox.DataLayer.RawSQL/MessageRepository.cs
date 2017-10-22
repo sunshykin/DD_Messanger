@@ -29,10 +29,12 @@ namespace ChatterBox.DataLayer.RawSQL
         {
             if (text.IsEmpty())
                 throw new ArgumentException("Введите текст сообщения");
-            if (userid == null)
+            if (userid == null || !_usersRepository.UserExists(userid))
                 throw new ArgumentException("Неверный id пользователя");
-            if (chatid == null)
+            if (chatid == null || !_chatsRepository.ChatExists(chatid))
                 throw new ArgumentException("Неверный id чата");
+            if (!_usersRepository.GetUserChats(userid).Any(c => c.Id == chatid))
+                throw new ArgumentException($"Среди доступных чатов пользователя нет чата с id {chatid}");
             files = files ?? new List<string>();
             var msg = new Message() {Text = text};
             msg.Id = Guid.NewGuid();
@@ -81,7 +83,6 @@ namespace ChatterBox.DataLayer.RawSQL
                     transaction.Commit();
                     msg.Sender = _usersRepository.Get(userid);
                     msg.Attachs = GetMessageAttachs(msg.Id);
-                    msg.Chat = _chatsRepository.Get(chatid);
                     return msg;
                 }
             }
@@ -137,8 +138,7 @@ namespace ChatterBox.DataLayer.RawSQL
                             SelfDestruction = reader.GetBoolean(reader.GetOrdinal("SelfDestruction")),
                             SelfDestructionDate = reader.GetDateTime(reader.GetOrdinal("SelfDestructionDate")),
                             Attachs = GetMessageAttachs(reader.GetGuid(reader.GetOrdinal("MessageId"))),
-                            Sender = _usersRepository.Get(reader.GetGuid(reader.GetOrdinal("SenderId"))),
-                            Chat = _chatsRepository.Get(reader.GetGuid(reader.GetOrdinal("ChatId")))
+                            Sender = _usersRepository.Get(reader.GetGuid(reader.GetOrdinal("SenderId")))
                         };
                     }
                 }
