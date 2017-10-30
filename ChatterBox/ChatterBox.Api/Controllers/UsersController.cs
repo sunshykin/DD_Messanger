@@ -11,6 +11,7 @@ using ChatterBox.DataLayer.RawSQL;
 using ChatterBox.Model;
 using Microsoft.Web.Http;
 using Microsoft.Web.Http.Routing;
+using NLog;
 
 namespace ChatterBox.Api.Controllers
 {   
@@ -20,122 +21,117 @@ namespace ChatterBox.Api.Controllers
     {
         private readonly IUsersRepository _usersRepository;
         private const string ConnectionString = @"Data Source=DESKTOP-C09EP1V\SQLEXPRESS;Initial Catalog=MessengerBase;Integrated Security=True;";
-        
+        private readonly Logger Log;
+
         public UsersController()
         {
             _usersRepository = new UsersRepository(ConnectionString);
+            Log = LogManager.GetCurrentClassLogger();
         }
         
         [HttpPost]
         [Route("")]
         public User Create([FromBody] UserOnCreate user)
         {
-            try
-            {
-                return _usersRepository.Create(new User() {Name = user.Name, Picture = user.Picture},
-                    user.Login, user.Password);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug("Создание пользователя.");
+            var result = _usersRepository.Create(new User() { Name = user.Name, Picture = user.Picture },
+                user.Login, user.Password);
+            Log.Debug($"Создание пользователя завершено, Id = {result.Id}.");
+            return result;
         }
 
         [HttpGet]
         [Route("{id}")]
         public User Get([FromUri] Guid id)
         {
-            try
-            {
-                return _usersRepository.Get(id);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug($"Получение пользователя с Id = {id} из БД.");
+            var result = _usersRepository.Get(id);
+            Log.Debug("Получение пользователя из БД завершено.");
+            return result;
         }
 
         [HttpDelete]
         [Route("{id}")]
         public void Delete([FromUri] Guid id)
         {
-            try
-            {
-                _usersRepository.Delete(id);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug($"Удаление пользователя с Id = {id} из БД.");
+            _usersRepository.Delete(id);
+            Log.Debug("Удаление пользователя из БД завершено.");
         }
 
         [HttpGet]
         [Route("{id}/exists")]
         public bool Exists([FromUri] Guid id)
         {
-            return _usersRepository.UserExists(id);
+            Log.Debug("Выполнение функции Exists.");
+            var result = _usersRepository.UserExists(id);
+            Log.Debug("Выполнение функции Exists завершено.");
+            return result;
         }
 
         [HttpPost]
         [Route("{id}/changelogin")]
         public void ChangeLogin([FromUri] Guid id, [FromBody] string[] parametrs)
         {
-            try
+            Log.Debug($"Смена логина пользователя с Id = {id}.");
+            if (parametrs == null || parametrs.Length != 2)
             {
-                if (parametrs == null || parametrs.Length != 2)
-                    throw new ArgumentException("Неверное количество введенных параметров");
-                _usersRepository.ChangeLogin(id, parametrs[0], parametrs[1]);
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Неверное количество введенных параметров"),
+                    ReasonPhrase = "Wrong User Arguments"
+                };
+                throw new HttpResponseException(resp);
             }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            _usersRepository.ChangeLogin(id, parametrs[0], parametrs[1]);
+            Log.Debug("Смена логина пользователя завершена.");
         }
 
         [HttpPost]
         [Route("{id}/changepass")]
         public void ChangePassword([FromUri] Guid id, [FromBody] string[] parametrs)
         {
-            try
+            Log.Debug($"Смена пароля пользователя с ID = {id}.");
+            if (parametrs == null || parametrs.Length != 2)
             {
-                if (parametrs == null || parametrs.Length != 2)
-                    throw new ArgumentException("Неверное количество введенных параметров");
-                _usersRepository.ChangePassword(id, parametrs[0], parametrs[1]);
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Неверное количество введенных параметров"),
+                    ReasonPhrase = "Wrong User Arguments"
+                };
+                throw new HttpResponseException(resp);
             }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            _usersRepository.ChangePassword(id, parametrs[0], parametrs[1]);
+            Log.Debug("Смена пароля пользователя завершена.");
         }
 
         [HttpPost]
         [Route("signin")]
         public User SignIn([FromBody] string[] loginpass)
         {
-            try
+            Log.Debug("Выполнение входа в систему.");
+            if (loginpass == null || loginpass.Length != 2)
             {
-                if (loginpass == null || loginpass.Length != 2)
-                    throw new ArgumentException("Неверное количество введенных параметров");
-                return _usersRepository.SignIn(loginpass[0], loginpass[1]);
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Неверное количество введенных параметров"),
+                    ReasonPhrase = "Wrong User Arguments"
+                };
+                throw new HttpResponseException(resp);
             }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            var result = _usersRepository.SignIn(loginpass[0], loginpass[1]);
+            Log.Debug("Выполнение входа в систему завершено.");
+            return result;
         }
 
         [HttpGet]
         [Route("{id}/chats")]
         public IEnumerable<Chat> GetUserChats([FromUri] Guid id)
         {
-            try
-            {
-                return _usersRepository.GetUserChats(id);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug("Выполнение функции GetUserChats.");
+            var result = _usersRepository.GetUserChats(id);
+            Log.Debug("Выполнение функции GetUserChats завершено.");
+            return result;
         }
 
     }

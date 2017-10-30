@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Http;
 using ChatterBox.Extentions;
 using ChatterBox.Model;
 
@@ -29,9 +32,23 @@ namespace ChatterBox.DataLayer.RawSQL
         public Chat Create(string title, IEnumerable<Guid> members, string picture = null)
         {
             if (title.IsEmpty())
-                throw new ArgumentException("Название чата не задано");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Название чата не задано"),
+                    ReasonPhrase = "Wrong Chat Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             if (!members.Any())
-                throw new ArgumentException("Не выбраны пользователи");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Не выбраны пользователи"),
+                    ReasonPhrase = "Wrong Chat Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             Chat chat = new Chat()
             {
                 Id = Guid.NewGuid(),
@@ -79,7 +96,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public void Delete(Guid id)
         {
             if (!ChatExists(id))
-                throw new ArgumentException("Не удалось найти данный чат");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {id} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -107,7 +131,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public Chat Get(Guid id)
         {
             if (!ChatExists(id))
-                throw new ArgumentException("Не удалось найти данный чат");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {id} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -154,7 +185,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public IEnumerable<User> GetChatUsers(Guid id)
         {
             if (!ChatExists(id))
-                throw new ArgumentException("Не удалось найти данный чат");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {id} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -176,7 +214,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public IEnumerable<Attach> GetChatAttachs(Guid id)
         {
             if (!ChatExists(id))
-                throw new ArgumentException("Не удалось найти данный чат");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {id} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -199,7 +244,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public IEnumerable<Message> GetChatMessages(Guid id)
         {
             if (!ChatExists(id))
-                throw new ArgumentException("Не удалось найти данный чат");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {id} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -221,7 +273,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public void ChangeTitle(Guid id, string newTitle)
         {
             if (!ChatExists(id))
-                throw new ArgumentException("Не удалось найти данный чат");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {id} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -238,7 +297,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public void ChangePicture(Guid id, string newPath)
         {
             if (!ChatExists(id))
-                throw new ArgumentException("Не удалось найти данный чат");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {id} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -255,9 +321,23 @@ namespace ChatterBox.DataLayer.RawSQL
         public void AddMembers(Guid id, IEnumerable<Guid> members)
         {
             if (!ChatExists(id))
-                throw new ArgumentException("Не удалось найти данный чат");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {id} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             if (!members.Any())
-                throw new ArgumentException("Не выбраны пользователи");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Не выбраны пользователи"),
+                    ReasonPhrase = "Wrong Chat Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -280,9 +360,23 @@ namespace ChatterBox.DataLayer.RawSQL
         public void DeleteMembers(Guid id, IEnumerable<Guid> members)
         {
             if (!ChatExists(id))
-                throw new ArgumentException("Не удалось найти данный чат");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {id} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             if (!members.Any())
-                throw new ArgumentException("Не выбраны пользователи");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Не выбраны пользователи"),
+                    ReasonPhrase = "Wrong Chat Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();

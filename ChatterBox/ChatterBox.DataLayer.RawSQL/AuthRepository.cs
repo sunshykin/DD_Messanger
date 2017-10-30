@@ -2,7 +2,10 @@
 using System.Text;
 using ChatterBox.Model;
 using System.Data.SqlClient;
+using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
+using System.Web.Http;
 using ChatterBox.Extentions;
 
 namespace ChatterBox.DataLayer.RawSQL
@@ -31,8 +34,15 @@ namespace ChatterBox.DataLayer.RawSQL
 
         public Auth Get(Guid userid)
         {
-            if (userid == null)
-                throw new ArgumentException("Id пользователя не задан");
+            if (userid == null || !_usersRepository.UserExists(userid))
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -96,7 +106,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public User SignIn(string login, string pass)
         {
             if (!CanSignIn(login, pass))
-                throw new ArgumentException("Пользователь с таким логином/паролем не найден");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Пользователь с таким логином/паролем не найден"),
+                    ReasonPhrase = "Wrong Auth Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();

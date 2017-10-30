@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 using ChatterBox.Model;
 
 namespace ChatterBox.DataLayer.RawSQL
@@ -19,7 +22,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public void Delete(Guid id)
         {
             if (!AttachExists(id))
-                throw new ArgumentException("Не удалось найти данный файл");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Файл с ID = {id} не найден"),
+                    ReasonPhrase = "Attach ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -35,7 +45,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public Attach Get(Guid id)
         {
             if (!AttachExists(id))
-                throw new ArgumentException("Не удалось найти данный файл");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Файл с ID = {id} не найден"),
+                    ReasonPhrase = "Attach ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();

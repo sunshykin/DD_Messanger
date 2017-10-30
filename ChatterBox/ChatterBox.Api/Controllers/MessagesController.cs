@@ -9,6 +9,7 @@ using ChatterBox.DataLayer;
 using ChatterBox.DataLayer.RawSQL;
 using ChatterBox.Model;
 using Microsoft.Web.Http;
+using NLog;
 
 namespace ChatterBox.Api.Controllers
 {
@@ -18,116 +19,92 @@ namespace ChatterBox.Api.Controllers
     {
         private readonly IMessagesRepository _messagesRepository;
         private const string ConnectionString = @"Data Source=DESKTOP-C09EP1V\SQLEXPRESS;Initial Catalog=MessengerBase;Integrated Security=True;";
+        private readonly Logger Log;
 
         public MessagesController()
         {
             _messagesRepository = new MessagesRepository(ConnectionString);
+            Log = LogManager.GetCurrentClassLogger();
         }
 
         [HttpPost]
         [Route("")]
         public Message Create([FromBody] MessageOnCreate msg)
         {
-            try
-            {
-                return _messagesRepository.Send(msg.Text, msg.UserId, msg.ChatId, msg.Files, 
-                    msg.SelfDestruction, msg.DestructionTime);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug("Создание сообщения.");
+            var result = _messagesRepository.Send(msg.Text, msg.UserId, msg.ChatId, msg.Files,
+                msg.SelfDestruction, msg.DestructionTime);
+            Log.Debug($"Создание сообщения завершено, Id = {result.Id}.");
+            return result;
         }
 
         [HttpDelete]
         [Route("{id}")]
         public void Delete([FromUri] Guid id)
         {
-            try
-            {
-                _messagesRepository.Delete(id);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug($"Удаление сообщения с Id = {id} из БД.");
+            _messagesRepository.Delete(id);
+            Log.Debug("Удаление сообщения завершено.");
         }
 
         [HttpGet]
         [Route("{id}")]
         public Message Get([FromUri] Guid id)
         {
-            try
-            {
-                return _messagesRepository.Get(id);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug($"Получение сообщения с Id = {id} из БД.");
+            var result = _messagesRepository.Get(id);
+            Log.Debug($"Получение сообщения из БД завершено.");
+            return result;
         }
 
         [HttpGet]
         [Route("{id}/exists")]
         public bool Exists([FromUri] Guid id)
         {
-            return _messagesRepository.MessageExists(id);
+            Log.Debug("Выполнение функции Exists.");
+            var result = _messagesRepository.MessageExists(id);
+            Log.Debug("Выполнение функции Exists завершено.");
+            return result;
         }
 
         [HttpGet]
         [Route("{id}/attachs")]
         public IEnumerable<Attach> GetMessageAttachs([FromUri] Guid id)
         {
-            try
-            {
-                return _messagesRepository.GetMessageAttachs(id);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug("Выполнение функции GetMessageAttachs.");
+            var result = _messagesRepository.GetMessageAttachs(id);
+            Log.Debug("Выполнение функции GetMessageAttachs завершено.");
+            return result;
         }
 
         [HttpGet]
         [Route("fromuser/{id}")]
         public IEnumerable<Message> GetMessageFromUser([FromUri] Guid id)
         {
-            try
-            {
-                return _messagesRepository.GetMessagesFromUser(id);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug("Выполнение функции GetMessageFromUser.");
+            var result = _messagesRepository.GetMessagesFromUser(id);
+            Log.Debug("Выполнение функции GetMessageFromUser завершено.");
+            return result;
         }
 
         [HttpGet]
         [Route("touser/{id}")]
         public IEnumerable<Message> GetMessageToUser([FromUri] Guid id)
         {
-            try
-            {
-                return _messagesRepository.GetMessagesToUser(id);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug("Выполнение функции GetMessageToUser.");
+            var result = _messagesRepository.GetMessagesToUser(id);
+            Log.Debug("Выполнение функции GetMessageToUser завершено.");
+            return result;
         }
 
         [HttpPost]
         [Route("search")]
         public IEnumerable<Message> Search([FromBody] SearchInfo search)
         {
-            try
-            {
-                return _messagesRepository.SearchMessages(search.UserId, search.KeyWord);
-            }
-            catch (Exception e)
-            {
-                throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.Conflict, e.Message));
-            }
+            Log.Debug($"Поиск сообщений по фразе \"{search.KeyWord}\".");
+            var result = _messagesRepository.SearchMessages(search.UserId, search.KeyWord);
+            Log.Debug($"Поиск сообщений по фразе \"{search.KeyWord}\" завершен.");
+            return result;
         }
     }
 }

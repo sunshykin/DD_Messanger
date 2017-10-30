@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 using ChatterBox.Extentions;
 using ChatterBox.Model;
 
@@ -23,11 +26,32 @@ namespace ChatterBox.DataLayer.RawSQL
         public User Create(User user, string login, string pass)
         {
             if (user.Name.IsEmpty())
-                throw new ArgumentException("Имя пользователя не задано");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Имя пользователя не задано"),
+                    ReasonPhrase = "Wrong User Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             if (login.IsEmpty() || pass.IsEmpty())
-                throw new ArgumentException("Поля логин и/или пароль не заполнены");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Поля логин и/или пароль не заполнены"),
+                    ReasonPhrase = "Wrong User Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             if (_authRepository.LoginExists(login))
-                throw new ArgumentException("Выбранный Вами логин занят, придумайте другой");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Выбранный Вами логин занят, придумайте другой"),
+                    ReasonPhrase = "Wrong User Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             User result = new User()
             {
                 Id = Guid.NewGuid(),
@@ -72,7 +96,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public void Delete(Guid id)
         {
             if (!UserExists(id))
-                throw new ArgumentException("Не удалось найти данного пользователя");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {id} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -100,7 +131,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public User Get(Guid id)
         {
             if (!UserExists(id))
-                throw new ArgumentException("Не удалось найти данного пользователя");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {id} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -145,10 +183,24 @@ namespace ChatterBox.DataLayer.RawSQL
         public void ChangeLogin(Guid userid, string newLogin, string pass)
         {
             if (!UserExists(userid))
-                throw new ArgumentException("Не удалось найти данного пользователя");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             Auth auth = _authRepository.Get(userid);
             if (auth.Password != AuthRepository.GetHashString(pass))
-                throw new ArgumentException("Неправильный пароль");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Неверный пароль"),
+                    ReasonPhrase = "Wrong User Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -165,10 +217,24 @@ namespace ChatterBox.DataLayer.RawSQL
         public void ChangePassword(Guid userid, string oldPassword, string newPassword)
         {
             if (!UserExists(userid))
-                throw new ArgumentException("Не удалось найти данного пользователя");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             Auth auth = _authRepository.Get(userid);
             if (auth.Password != AuthRepository.GetHashString(oldPassword))
-                throw new ArgumentException("Неправильный пароль");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Неверный пароль"),
+                    ReasonPhrase = "Wrong User Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -185,7 +251,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public IEnumerable<Chat> GetUserChats(Guid userid)
         {
             if (!UserExists(userid))
-                throw new ArgumentException("Не удалось найти данного пользователя");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();

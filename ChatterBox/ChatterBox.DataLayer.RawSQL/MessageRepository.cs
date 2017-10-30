@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 using ChatterBox.Extentions;
 using ChatterBox.Model;
 
@@ -28,13 +31,41 @@ namespace ChatterBox.DataLayer.RawSQL
             bool selfDestruction = false, string destructionTime = null)
         {
             if (text.IsEmpty())
-                throw new ArgumentException("Введите текст сообщения");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Введите текст сообщения"),
+                    ReasonPhrase = "Message text is empty"
+                };
+                throw new HttpResponseException(resp);
+            }
             if (userid == null || !_usersRepository.UserExists(userid))
-                throw new ArgumentException("Неверный id пользователя");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             if (chatid == null || !_chatsRepository.ChatExists(chatid))
-                throw new ArgumentException("Неверный id чата");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Чат с ID = {chatid} не найден"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             if (!_usersRepository.GetUserChats(userid).Any(c => c.Id == chatid))
-                throw new ArgumentException($"Среди доступных чатов пользователя нет чата с id {chatid}");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Среди доступных чатов пользователя нет чата с id {chatid}"),
+                    ReasonPhrase = "Chat ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             files = files ?? new List<string>();
             var msg = new Message() {Text = text};
             msg.Id = Guid.NewGuid();
@@ -91,7 +122,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public void Delete(Guid id)
         {
             if (!MessageExists(id))
-                throw new ArgumentException("Не удалось найти данное сообщение");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Сообщение с ID = {id} не найденпо"),
+                    ReasonPhrase = "Message ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -119,7 +157,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public Message Get(Guid id)
         {
             if (!MessageExists(id))
-                throw new ArgumentException("Не удалось найти данное сообщение");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Сообщение с ID = {id} не найденпо"),
+                    ReasonPhrase = "Message ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -168,7 +213,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public IEnumerable<Attach> GetMessageAttachs(Guid messageid)
         {
             if (!MessageExists(messageid))
-                throw new ArgumentException("Не удалось найти данное сообщение");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Сообщение с ID = {messageid} не найденпо"),
+                    ReasonPhrase = "Message ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -190,7 +242,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public IEnumerable<Message> GetMessagesFromUser(Guid userid)
         {
             if (!_usersRepository.UserExists(userid))
-                throw new ArgumentException("Не удалось найти данного пользователя");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -212,7 +271,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public IEnumerable<Message> GetMessagesToUser(Guid userid)
         {
             if (!_usersRepository.UserExists(userid))
-                throw new ArgumentException("Не удалось найти данного пользователя");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -235,7 +301,14 @@ namespace ChatterBox.DataLayer.RawSQL
         public IEnumerable<Message> SearchMessages(Guid userid, string keyword)
         {
             if (!_usersRepository.UserExists(userid))
-                throw new ArgumentException("Не удалось найти данного пользователя");
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
             return GetMessagesFromUser(userid).Union(GetMessagesToUser(userid))
                 .Where(m => m.Text.Contains(keyword));
         }
