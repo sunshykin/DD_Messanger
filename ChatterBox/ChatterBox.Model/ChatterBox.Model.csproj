@@ -42,6 +42,10 @@
     <Compile Include="Auth.cs" />
     <Compile Include="Chat.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="Additional\ChatOnCreate.cs" />
+    <Compile Include="Additional\MessageOnCreate.cs" />
+    <Compile Include="Additional\SearchInfo.cs" />
+    <Compile Include="Additional\UserOnCreate.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

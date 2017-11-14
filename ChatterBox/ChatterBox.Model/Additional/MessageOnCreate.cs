@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Web;
 
-namespace ChatterBox.Api.Models
+namespace ChatterBox.Model.Additional
 {
     public class MessageOnCreate
     {

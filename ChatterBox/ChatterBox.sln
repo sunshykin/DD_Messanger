@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Model", "ChatterBox.Model\ChatterBox.Model.csproj", "{B144D466-B2D4-4FAC-81A8-33BF0D512EEA}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.DataLayer.RawSQL.Tests", "ChatterBox.DataLayer.RawSQL.Tests\ChatterBox.DataLayer.RawSQL.Tests.csproj", "{E0337E3F-E7ED-4457-9BA2-5F709879CEC5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Api", "ChatterBox.Api\ChatterBox.Api.csproj", "{2381858E-C585-4A84-8A6C-80DCA3B114EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatterBox.Client.WinForms", "ChatterBox.Client.WinForms\ChatterBox.Client.WinForms.csproj", "{6B4AEB06-2A75-450A-A41D-B2233A4FC9D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{2381858E-C585-4A84-8A6C-80DCA3B114EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2381858E-C585-4A84-8A6C-80DCA3B114EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2381858E-C585-4A84-8A6C-80DCA3B114EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B4AEB06-2A75-450A-A41D-B2233A4FC9D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B4AEB06-2A75-450A-A41D-B2233A4FC9D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B4AEB06-2A75-450A-A41D-B2233A4FC9D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B4AEB06-2A75-450A-A41D-B2233A4FC9D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

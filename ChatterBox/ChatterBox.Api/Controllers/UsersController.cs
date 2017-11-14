@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Routing;
-using ChatterBox.Api.Models;
+using ChatterBox.Model.Additional;
 using ChatterBox.DataLayer;
 using ChatterBox.DataLayer.RawSQL;
 using ChatterBox.Model;
