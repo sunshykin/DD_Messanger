@@ -16,7 +16,7 @@ namespace ChatterBox.Model
         /// <summary>
         /// Аватарка пользователя
         /// </summary>
-        public string Picture { get; set; }
+        public byte[] Picture { get; set; }
         /// <summary>
         /// Информация для входа в систему
         /// </summary>

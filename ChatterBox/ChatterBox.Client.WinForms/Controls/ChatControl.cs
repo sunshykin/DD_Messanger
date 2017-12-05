@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ChatterBox.Client.WinForms.Helpers;
 using ChatterBox.Model;
 using Message = ChatterBox.Model.Message;
 
@@ -15,8 +16,12 @@ namespace ChatterBox.Client.WinForms.Controls
     public partial class ChatControl : UserControl
     {
         private Guid _id;
-        public IEnumerable<Message> Messages;
+        private IEnumerable<Message> _messages;
+        private bool _clicked;
+
+        public IEnumerable<Message> Messages { get { return _messages ?? new List<Message>(); } }
         public Guid Id { get { return _id; } }
+        public bool Clicked { get { return _clicked; } set { _clicked = value; } }
 
         public ChatControl()
         {
@@ -25,36 +30,34 @@ namespace ChatterBox.Client.WinForms.Controls
 
         public ChatControl(Chat chat) : this()
         {
-            _id = chat.Id;
-            var t = mainLayoutPanel.Controls["textLayoutPanel"];
-            t.Controls["chatTitleLabel"].Text = chat.Title;
-            t.Controls["messageLabel"].Text = chat.Messages.Count() != 0 ? 
-                chat.Messages.OrderByDescending(m => m.Date).ElementAt(0).Text : "Нет сообщений";
-            ((PictureBox)mainLayoutPanel.Controls["avatarBox"]).Image = Properties.Resources.DefaultImage;
+            _clicked = false;
+            UpdateView(chat);
         }
 
         private void ChatControl_MouseEnter(object sender, EventArgs e)
         {
-            BackColor = Color.LightBlue;
+            if (!_clicked)
+                BackColor = ControlPaint.Light(Color.PaleGreen, 0.8f);
         }
 
         private void ChatControl_MouseLeave(object sender, EventArgs e)
         {
-            BackColor = Color.White;
+            if (!_clicked)
+                BackColor = Color.White;
         }
 
         private void ChatControl_Click(object sender, EventArgs e)
         {
-            if (Messages == null)
+            if (_messages == null)
             {
                 try
                 {
-                    Messages = Methods.ChatMessages(_id);
+                    _messages = DataBaseHelper.ChatMessages(_id);
                 }
                 catch (Exception ex)
                 {
-                    Messages = new List<Message>();
-                    //Обработать ошибку
+                    _messages = new List<Message>();
+                    DataBaseHelper.ExceptionHandler(ex.Message);
                 }
             }
         }
@@ -69,16 +72,39 @@ namespace ChatterBox.Client.WinForms.Controls
             messageLabel.Click += ev;
         }
 
-        public void RefreshMessages()
+        public void RefreshMessages(string key = null)
         {
             try
             {
-                Messages = Methods.ChatMessages(_id);
+                if (key == null)
+                    _messages = DataBaseHelper.ChatMessages(_id);
+                else
+                {
+                    var list = DataBaseHelper.ChatMessages(_id).Where(m => m.Text.ToLower().Contains(key));
+                    _messages = list.Count() == 0 ? new List<Message>() : list.ToList();
+
+                }
             }
             catch (Exception ex)
             {
-                Messages = new List<Message>();
-                //Обработать ошибку
+                _messages = new List<Message>();
+                DataBaseHelper.ExceptionHandler(ex.Message);
+            }
+        }
+
+        public void UpdateView(Chat chat)
+        {
+            _id = chat.Id;
+            chatTitleLabel.Text = chat.Title;
+            messageLabel.Text = chat.Messages.Count() != 0 ?
+                chat.Messages.OrderByDescending(m => m.Date).ElementAt(0).Text : "Нет сообщений";
+            try
+            {
+                avatarBox.Image = DataBaseHelper.DeserializeImage(chat.Picture);
+            }
+            catch
+            {
+                avatarBox.Image = Properties.Resources.DefaultImage;
             }
         }
     }

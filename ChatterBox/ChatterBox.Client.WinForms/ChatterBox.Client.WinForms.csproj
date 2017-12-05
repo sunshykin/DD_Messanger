@@ -32,12 +32,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Net" />
-    <Reference Include="System.Net.Http">
-      <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Net.Http, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Extensions.dll</HintPath>
@@ -48,9 +52,21 @@
     <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.WebRequest">
-      <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.ProtectedData, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.ProtectedData.4.4.0\lib\net461\System.Security.Cryptography.ProtectedData.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -62,6 +78,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\AttachLargeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AttachLargeControl.Designer.cs">
+      <DependentUpon>AttachLargeControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ChatControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -86,6 +108,12 @@
     <Compile Include="Controls\AuthControl.Designer.cs">
       <DependentUpon>AuthControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UserInfoControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UserInfoControl.Designer.cs">
+      <DependentUpon>UserInfoControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\AuthForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -104,9 +132,81 @@
     <Compile Include="Forms\MainViewForm.Designer.cs">
       <DependentUpon>MainViewForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Methods.cs" />
+    <Compile Include="Helpers\AuthSerializationHelper.cs" />
+    <Compile Include="Helpers\PseudoDialogHelper.cs" />
+    <Compile Include="Helpers\PseudoDropDownHelper.cs" />
+    <Compile Include="SubForms\AttachsViewSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\AttachsViewSubForm.Designer.cs">
+      <DependentUpon>AttachsViewSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForms\ChatInfoSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\ChatInfoSubForm.Designer.cs">
+      <DependentUpon>ChatInfoSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForms\CommonSettingsSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\CommonSettingsSubForm.Designer.cs">
+      <DependentUpon>CommonSettingsSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForms\SearchSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\SearchSubForm.Designer.cs">
+      <DependentUpon>SearchSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\DataBaseHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubForms\ChatSettingsSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\ChatSettingsSubForm.Designer.cs">
+      <DependentUpon>ChatSettingsSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForms\SimpleFileLoadSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\SimpleFileLoadSubForm.Designer.cs">
+      <DependentUpon>SimpleFileLoadSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForms\SimpleDoubleInputSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\SimpleDoubleInputSubForm.Designer.cs">
+      <DependentUpon>SimpleDoubleInputSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForms\SimpleInputSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\SimpleInputSubForm.Designer.cs">
+      <DependentUpon>SimpleInputSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForms\SimpleYesNoSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\SimpleYesNoSubForm.Designer.cs">
+      <DependentUpon>SimpleYesNoSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForms\UserListSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\UserListSubForm.Designer.cs">
+      <DependentUpon>UserListSubForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForms\UserSettingsSubForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForms\UserSettingsSubForm.Designer.cs">
+      <DependentUpon>UserSettingsSubForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Controls\AttachLargeControl.resx">
+      <DependentUpon>AttachLargeControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ChatControl.resx">
       <DependentUpon>ChatControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -119,6 +219,9 @@
     <EmbeddedResource Include="Controls\AuthControl.resx">
       <DependentUpon>AuthControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UserInfoControl.resx">
+      <DependentUpon>UserInfoControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\AuthForm.resx">
       <DependentUpon>AuthForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -128,21 +231,54 @@
     <EmbeddedResource Include="Forms\MainViewForm.resx">
       <DependentUpon>MainViewForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\AttachsViewSubForm.resx">
+      <DependentUpon>AttachsViewSubForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\ChatInfoSubForm.resx">
+      <DependentUpon>ChatInfoSubForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\CommonSettingsSubForm.resx">
+      <DependentUpon>CommonSettingsSubForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\SearchSubForm.resx">
+      <DependentUpon>SearchSubForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
+    <EmbeddedResource Include="SubForms\ChatSettingsSubForm.resx">
+      <DependentUpon>ChatSettingsSubForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\SimpleFileLoadSubForm.resx">
+      <DependentUpon>SimpleFileLoadSubForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\SimpleDoubleInputSubForm.resx">
+      <DependentUpon>SimpleDoubleInputSubForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\SimpleInputSubForm.resx">
+      <DependentUpon>SimpleInputSubForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\SimpleYesNoSubForm.resx">
+      <DependentUpon>SimpleYesNoSubForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\UserListSubForm.resx">
+      <DependentUpon>UserListSubForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForms\UserSettingsSubForm.resx">
+      <DependentUpon>UserSettingsSubForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -153,6 +289,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ChatterBox.Extentions\ChatterBox.Extentions.csproj">
+      <Project>{29b4ebd9-1504-45b1-bb5a-7d65d1d19063}</Project>
+      <Name>ChatterBox.Extentions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ChatterBox.Model\ChatterBox.Model.csproj">
       <Project>{b144d466-b2d4-4fac-81a8-33bf0d512eea}</Project>
       <Name>ChatterBox.Model</Name>
@@ -162,7 +302,49 @@
     <None Include="Resources\default.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\depositphotos_120528692-stock-illustration-arrow-up-contour-vector-icon.jpg" />
+    <None Include="Resources\arrow.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tools.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\closeX.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\deleteActive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\deleteInactive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\addActive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\addInactive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hide.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\unhide.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hideActive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\unhideActive.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\attach.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\file.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

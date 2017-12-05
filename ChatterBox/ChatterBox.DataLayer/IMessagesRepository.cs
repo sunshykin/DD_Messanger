@@ -6,7 +6,7 @@ namespace ChatterBox.DataLayer
 {
     public interface IMessagesRepository
     {
-        Message Send(string text, Guid userid, Guid chatid, IEnumerable<string> files,
+        Message Send(string text, Guid userid, Guid chatid, IEnumerable<string> fileNames, IEnumerable<byte[]> files,
             bool selfDestruction, string destructionTime);
         void Delete(Guid id);
         Message Get(Guid id);

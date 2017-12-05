@@ -27,7 +27,7 @@ namespace ChatterBox.DataLayer.RawSQL
         }
 
 
-        public Message Send(string text, Guid userid, Guid chatid, IEnumerable<string> files = null,
+        public Message Send(string text, Guid userid, Guid chatid, IEnumerable<string> fileNames = null, IEnumerable<byte[]> files = null,
             bool selfDestruction = false, string destructionTime = null)
         {
             if (text.IsEmpty())
@@ -66,7 +66,7 @@ namespace ChatterBox.DataLayer.RawSQL
                 };
                 throw new HttpResponseException(resp);
             }
-            files = files ?? new List<string>();
+            files = files ?? new List<byte[]>();
             var msg = new Message() {Text = text};
             msg.Id = Guid.NewGuid();
             msg.Date = DateTime.Now;
@@ -95,16 +95,17 @@ namespace ChatterBox.DataLayer.RawSQL
 
                         command.ExecuteNonQuery();
                     }
-                    foreach (var f in files)
+                    for (int i = 0; i < files.Count(); i++)//foreach (var f in files)
                     {
                         using (var command = connection.CreateCommand())
                         {
                             command.Transaction = transaction;
-                            command.CommandText = "INSERT INTO Attachs (AttachId, Path, UserId, MessageId)" +
-                                                  " VALUES (@attachid, @path, @userid, @messageid)";
+                            command.CommandText = "INSERT INTO Attachs (AttachId, FileName, FileData, UserId, MessageId)" +
+                                                  " VALUES (@attachid, @filename, @filedata, @userid, @messageid)";
 
                             command.Parameters.AddWithValue("@attachid", Guid.NewGuid());
-                            command.Parameters.AddWithValue("@path", f);
+                            command.Parameters.AddWithValue("@filename", fileNames.ElementAt(i));
+                            command.Parameters.AddWithValue("@filedata", files.ElementAt(i));
                             command.Parameters.AddWithValue("@userid", userid);
                             command.Parameters.AddWithValue("@messageid", msg.Id);
 

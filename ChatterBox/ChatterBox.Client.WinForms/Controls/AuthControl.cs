@@ -19,5 +19,10 @@ namespace ChatterBox.Client.WinForms.Controls
         {
             InitializeComponent();
         }
+
+        public void StartFocus()
+        {
+            loginTextBox.Focus();
+        }
     }
 }

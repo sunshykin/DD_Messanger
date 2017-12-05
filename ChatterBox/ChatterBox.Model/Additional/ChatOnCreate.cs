@@ -10,9 +10,9 @@ namespace ChatterBox.Model.Additional
         /// </summary>
         public string Title { get; set; }
         /// <summary>
-        /// Аватарка чата
+        /// Аватар чата
         /// </summary>
-        public string Picture { get; set; }
+        public byte[] Picture { get; set; }
         /// <summary>
         /// Участники чата
         /// </summary>

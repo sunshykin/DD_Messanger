@@ -6,9 +6,13 @@ namespace ChatterBox.Model
     {
         public Guid Id { get; set; }
         /// <summary>
-        /// Путь до файла
+        /// Имя файла
         /// </summary>
-        public string Path { get; set; }
+        public string FileName { get; set; }
+        /// <summary>
+        /// Файл
+        /// </summary>
+        public byte[] FileData { get; set; }
         /// <summary>
         /// Пользователь, загрузивший файл
         /// </summary>

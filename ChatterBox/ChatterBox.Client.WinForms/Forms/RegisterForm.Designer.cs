@@ -90,7 +90,7 @@
             this.okButton.TabIndex = 1;
             this.okButton.Text = "Продолжить";
             this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.ok_Click);
+            this.okButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
             // registerControl
             // 
@@ -111,6 +111,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "RegisterForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Регистрация";
             this.mainLayoutPanel.ResumeLayout(false);
             this.butonsLayoutPanel.ResumeLayout(false);

@@ -67,11 +67,11 @@ namespace ChatterBox.DataLayer.RawSQL
                     using (var command = connection.CreateCommand())
                     {
                         command.Transaction = transaction;
-                        command.CommandText = "INSERT INTO Users (UserId, Name, PicturePath) VALUES (@id, @name, @pic)";
+                        command.CommandText = "INSERT INTO Users (UserId, Name, Picture) VALUES (@id, @name, @pic)";
 
                         command.Parameters.AddWithValue("@id", result.Id);
                         command.Parameters.AddWithValue("@name", result.Name);
-                        command.Parameters.AddWithValue("@pic", result.Picture ?? "");
+                        command.Parameters.AddWithValue("@pic", result.Picture);
 
                         command.ExecuteNonQuery();
                     }
@@ -144,7 +144,7 @@ namespace ChatterBox.DataLayer.RawSQL
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT TOP(1) Name, PicturePath FROM Users WHERE UserId = @id";
+                    command.CommandText = "SELECT TOP(1) Name, Picture FROM Users WHERE UserId = @id";
                     command.Parameters.AddWithValue("@id", id);
                     using (var reader = command.ExecuteReader())
                     {
@@ -153,9 +153,39 @@ namespace ChatterBox.DataLayer.RawSQL
                         {
                             Id = id,
                             Name = reader.GetString(reader.GetOrdinal("Name")),
-                            Picture = reader.GetString(reader.GetOrdinal("PicturePath")),
+                            Picture = reader.GetSqlBinary(reader.GetOrdinal("Picture")).Value,
                             LogInfo = _authRepository.Get(id)
                         };
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<User> GetContacts(Guid id)
+        {
+            if (!UserExists(id))
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {id} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT CASE WHEN c.User1Id = @id THEN c.User2Id WHEN c.User2Id = @id THEN c.User1Id END as Id " +
+                        "FROM Contacts c WHERE @id IN (c.User1Id, c.User2Id)";
+                    command.Parameters.AddWithValue("@id", id);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            yield return Get(reader.GetGuid(reader.GetOrdinal("Id")));
+                        }
                     }
                 }
             }
@@ -176,6 +206,30 @@ namespace ChatterBox.DataLayer.RawSQL
                             return false;
                         return true;
                     }
+                }
+            }
+        }
+
+        public void ChangeName(Guid userid, string newName)
+        {
+            if (!UserExists(userid))
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "UPDATE Users SET Name = @name WHERE UserId = @userid";
+                    command.Parameters.AddWithValue("@name", newName);
+                    command.Parameters.AddWithValue("@userid", userid);
+                    command.ExecuteNonQuery();
                 }
             }
         }
@@ -243,6 +297,64 @@ namespace ChatterBox.DataLayer.RawSQL
                     command.CommandText = "UPDATE Auth SET PasswordHash = @pass WHERE UserId = @userid";
                     command.Parameters.AddWithValue("@pass", AuthRepository.GetHashString(newPassword));
                     command.Parameters.AddWithValue("@userid", userid);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void ChangePicture(Guid userid, byte[] picture)
+        {
+            if (!UserExists(userid))
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "UPDATE Users SET Picture = @pic WHERE UserId = @userid";
+                    command.Parameters.AddWithValue("@pic", picture);
+                    command.Parameters.AddWithValue("@userid", userid);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteContact(Guid userid, Guid contactid)
+        {
+            if (!UserExists(userid))
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {userid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
+            if (!UserExists(contactid))
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent($"Пользователь с ID = {contactid} не найден"),
+                    ReasonPhrase = "User ID Not Found"
+                };
+                throw new HttpResponseException(resp);
+            }
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "DELETE FROM Contacts WHERE (User1Id = @user1id AND User2Id = @user2id) OR "
+                                          + "(User2Id = @user1id AND User1Id = @user2id)";
+                    command.Parameters.AddWithValue("@user1id", userid);
+                    command.Parameters.AddWithValue("@user2id", contactid);
                     command.ExecuteNonQuery();
                 }
             }

@@ -15,10 +15,12 @@ namespace ChatterBox.Client.WinForms.Controls
         public string UserName { get { return nameTextBox.Text; } }
         public string Login { get { return loginTextBox.Text; } }
         public string Password { get { return passwordTextBox.Text; } }
+        public Image Picture;
 
         public RegisterControl()
         {
             InitializeComponent();
+            Picture = null;
         }
 
         private void selectImage_Click(object sender, EventArgs e)
@@ -26,8 +28,8 @@ namespace ChatterBox.Client.WinForms.Controls
             var result = selectFileDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                selectImageButton.Text = "Файл выбран";//selectFileDialog.SafeFileName;
-
+                selectImageButton.Text = "Файл выбран";
+                Picture = Image.FromFile(selectFileDialog.FileName);
             }
 
         }

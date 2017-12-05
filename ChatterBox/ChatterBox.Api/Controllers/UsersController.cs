@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,11 +21,12 @@ namespace ChatterBox.Api.Controllers
     public class UsersController : ApiController
     {
         private readonly IUsersRepository _usersRepository;
-        private const string ConnectionString = @"Data Source=DESKTOP-C09EP1V\SQLEXPRESS;Initial Catalog=MessengerBase;Integrated Security=True;";
+        private readonly string ConnectionString;
         private readonly Logger Log;
 
         public UsersController()
         {
+            ConnectionString = ConfigurationManager.ConnectionStrings["ChatterBase"].ConnectionString;
             _usersRepository = new UsersRepository(ConnectionString);
             Log = LogManager.GetCurrentClassLogger();
         }
@@ -50,6 +52,16 @@ namespace ChatterBox.Api.Controllers
             return result;
         }
 
+        [HttpGet]
+        [Route("{id}/contacts")]
+        public IEnumerable<User> GetContacts([FromUri] Guid id)
+        {
+            Log.Debug($"Получение контактов пользователя с Id = {id} из БД.");
+            var result = _usersRepository.GetContacts(id);
+            Log.Debug("Получение контактов пользователя из БД завершено.");
+            return result;
+        }
+
         [HttpDelete]
         [Route("{id}")]
         public void Delete([FromUri] Guid id)
@@ -57,6 +69,15 @@ namespace ChatterBox.Api.Controllers
             Log.Debug($"Удаление пользователя с Id = {id} из БД.");
             _usersRepository.Delete(id);
             Log.Debug("Удаление пользователя из БД завершено.");
+        }
+
+        [HttpDelete]
+        [Route("{userid}/delcontact/{contactid}")]
+        public void DeleteContact([FromUri] Guid userid, [FromUri] Guid contactid)
+        {
+            Log.Debug($"Удаление контакта с Id = {userid} пользователя с Id = {userid} из БД.");
+            _usersRepository.DeleteContact(userid, contactid);
+            Log.Debug("Удаление контакта из БД завершено.");
         }
 
         [HttpGet]
@@ -67,6 +88,15 @@ namespace ChatterBox.Api.Controllers
             var result = _usersRepository.UserExists(id);
             Log.Debug("Выполнение функции Exists завершено.");
             return result;
+        }
+
+        [HttpPost]
+        [Route("{id}/changename")]
+        public void ChangeName([FromUri] Guid id, [FromBody] string newName)
+        {
+            Log.Debug($"Смена имени пользователя с Id = {id}.");
+            _usersRepository.ChangeName(id, newName);
+            Log.Debug("Смена логина пользователя завершена.");
         }
 
         [HttpPost]
@@ -103,6 +133,15 @@ namespace ChatterBox.Api.Controllers
             }
             _usersRepository.ChangePassword(id, parametrs[0], parametrs[1]);
             Log.Debug("Смена пароля пользователя завершена.");
+        }
+
+        [HttpPost]
+        [Route("{id}/changepicture")]
+        public void ChangePicture([FromUri] Guid id, [FromBody] byte[] picture)
+        {
+            Log.Debug($"Смена аватара пользователя с ID = {id}.");
+            _usersRepository.ChangePicture(id, picture);
+            Log.Debug("Смена аватара пользователя завершена.");
         }
 
         [HttpPost]

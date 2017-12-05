@@ -66,7 +66,8 @@ namespace ChatterBox.DataLayer.RawSQL
                         return new Attach()
                         {
                             Id = reader.GetGuid(reader.GetOrdinal("AttachId")),
-                            Path = reader.GetString(reader.GetOrdinal("Path")),
+                            FileName = reader.GetString(reader.GetOrdinal("FileName")),
+                            FileData = reader.GetSqlBinary(reader.GetOrdinal("FileData")).Value,
                             Sender = _usersRepository.Get(reader.GetGuid(reader.GetOrdinal("UserId")))
                         };
                     }

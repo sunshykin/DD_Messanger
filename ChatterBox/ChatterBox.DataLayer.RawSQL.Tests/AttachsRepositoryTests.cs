@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ChatterBox.DataLayer.RawSQL.Tests
@@ -7,8 +8,13 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
     [TestClass]
     public class AttachsRepositoryTests
     {
-        private const string ConnectionString = @"Data Source=DESKTOP-C09EP1V\SQLEXPRESS;Initial Catalog=MessengerBase;Integrated Security=True;";
-        
+        private readonly string ConnectionString;
+
+        public AttachsRepositoryTests()
+        {
+            ConnectionString = ConfigurationManager.ConnectionStrings["ChatterBase"].ConnectionString;
+        }
+
         [TestMethod]
         public void ShouldCheckExistanceOfAttach()
         {

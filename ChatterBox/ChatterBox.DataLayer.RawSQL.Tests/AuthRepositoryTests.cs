@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using ChatterBox.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,9 +9,14 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
     [TestClass]
     public class AuthRepositoryTests
     {
-        private const string ConnectionString = @"Data Source=DESKTOP-C09EP1V\SQLEXPRESS;Initial Catalog=MessengerBase;Integrated Security=True;";
-
         private readonly List<Guid> _tempUsers = new List<Guid>();
+
+        private readonly string ConnectionString;
+
+        public AuthRepositoryTests()
+        {
+            ConnectionString = ConfigurationManager.ConnectionStrings["ChatterBase"].ConnectionString;
+        }
 
         [TestMethod]
         public void ShouldCheckExistanceOfLogin()
@@ -19,7 +25,7 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             var user = new User
             {
                 Name = "testUser",
-                Picture = "\\pic\\temp.jpg"
+                Picture = new byte[] {}
             };
             var login = "testUser";
             var password = "qwerty123";
@@ -43,7 +49,7 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             var user = new User
             {
                 Name = "testUser",
-                Picture = "\\pic\\temp.jpg"
+                Picture = new byte[] {}
             };
             var login = "testUser";
             var password = "qwerty123";
@@ -66,7 +72,7 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             var user = new User
             {
                 Name = "testUser",
-                Picture = "\\pic\\temp.jpg"
+                Picture = new byte[] {}
             };
             var login = "testUser";
             var password = "qwerty123";

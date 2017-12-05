@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,11 +19,13 @@ namespace ChatterBox.Api.Controllers
     public class MessagesController : ApiController
     {
         private readonly IMessagesRepository _messagesRepository;
-        private const string ConnectionString = @"Data Source=DESKTOP-C09EP1V\SQLEXPRESS;Initial Catalog=MessengerBase;Integrated Security=True;";
+        private readonly string ConnectionString;
         private readonly Logger Log;
 
         public MessagesController()
         {
+
+            ConnectionString = ConfigurationManager.ConnectionStrings["ChatterBase"].ConnectionString;
             _messagesRepository = new MessagesRepository(ConnectionString);
             Log = LogManager.GetCurrentClassLogger();
         }
@@ -32,8 +35,8 @@ namespace ChatterBox.Api.Controllers
         public Message Create([FromBody] MessageOnCreate msg)
         {
             Log.Debug("Создание сообщения.");
-            var result = _messagesRepository.Send(msg.Text, msg.UserId, msg.ChatId, msg.Files,
-                msg.SelfDestruction, msg.DestructionTime);
+            var result = _messagesRepository.Send(msg.Text, msg.UserId, msg.ChatId, msg.Files.Select(f => f.FileName),
+                msg.Files.Select(f => f.FileData), msg.SelfDestruction, msg.DestructionTime);
             Log.Debug($"Создание сообщения завершено, Id = {result.Id}.");
             return result;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace ChatterBox.Model
 {
@@ -11,9 +12,9 @@ namespace ChatterBox.Model
         /// </summary>
         public string Title { get; set; }
         /// <summary>
-        /// Аватарка чата
+        /// Аватар чата
         /// </summary>
-        public string Picture { get; set; }
+        public byte[] Picture { get; set; }
         /// <summary>
         /// Участники чата
         /// </summary>

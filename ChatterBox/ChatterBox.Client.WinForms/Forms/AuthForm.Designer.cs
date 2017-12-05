@@ -75,10 +75,10 @@
             this.singupButton.Location = new System.Drawing.Point(3, 3);
             this.singupButton.Name = "singupButton";
             this.singupButton.Size = new System.Drawing.Size(123, 26);
-            this.singupButton.TabIndex = 0;
+            this.singupButton.TabIndex = 1;
             this.singupButton.Text = "Зарегистрироваться";
             this.singupButton.UseVisualStyleBackColor = true;
-            this.singupButton.Click += new System.EventHandler(this.signup_Click);
+            this.singupButton.Click += new System.EventHandler(this.SignUp_Click);
             // 
             // loginButton
             // 
@@ -86,10 +86,10 @@
             this.loginButton.Location = new System.Drawing.Point(132, 3);
             this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(124, 26);
-            this.loginButton.TabIndex = 1;
+            this.loginButton.TabIndex = 2;
             this.loginButton.Text = "Войти";
             this.loginButton.UseVisualStyleBackColor = true;
-            this.loginButton.Click += new System.EventHandler(this.login_Click);
+            this.loginButton.Click += new System.EventHandler(this.Login_Click);
             // 
             // authControl
             // 
@@ -97,7 +97,8 @@
             this.authControl.Location = new System.Drawing.Point(3, 12);
             this.authControl.Name = "authControl";
             this.authControl.Size = new System.Drawing.Size(259, 97);
-            this.authControl.TabIndex = 1;
+            this.authControl.TabIndex = 0;
+            this.authControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AuthForm_KeyDown);
             // 
             // AuthForm
             // 
@@ -110,6 +111,7 @@
             this.Name = "AuthForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Авторизация";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AuthForm_KeyDown);
             this.mainLayoutPanel.ResumeLayout(false);
             this.buttonsLayoutPanel.ResumeLayout(false);
             this.ResumeLayout(false);

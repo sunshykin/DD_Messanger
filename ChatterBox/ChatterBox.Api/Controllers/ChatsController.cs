@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Web.Http;
 using ChatterBox.Model.Additional;
 using ChatterBox.DataLayer;
@@ -15,11 +16,12 @@ namespace ChatterBox.Api.Controllers
     public class ChatsController : ApiController
     {
         private readonly IChatsRepository _chatsRepository;
-        private const string ConnectionString = @"Data Source=DESKTOP-C09EP1V\SQLEXPRESS;Initial Catalog=MessengerBase;Integrated Security=True;";
+        private readonly string ConnectionString;
         private readonly Logger Log;
 
         public ChatsController()
         {
+            ConnectionString = ConfigurationManager.ConnectionStrings["ChatterBase"].ConnectionString;
             _chatsRepository = new ChatsRepository(ConnectionString);
             Log = LogManager.GetCurrentClassLogger();
         }
@@ -74,7 +76,7 @@ namespace ChatterBox.Api.Controllers
 
         [HttpPost]
         [Route("{id}/changepicture")]
-        public void ChangePicture([FromUri] Guid id, [FromBody] string newPicture)
+        public void ChangePicture([FromUri] Guid id, [FromBody] byte[] newPicture)
         {
             Log.Debug($"Смена аватара чата с Id = {id}.");
             _chatsRepository.ChangePicture(id, newPicture);

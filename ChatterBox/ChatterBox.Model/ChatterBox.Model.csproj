@@ -38,6 +38,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Additional\File.cs" />
     <Compile Include="Attach.cs" />
     <Compile Include="Auth.cs" />
     <Compile Include="Chat.cs" />

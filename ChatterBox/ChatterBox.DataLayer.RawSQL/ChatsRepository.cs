@@ -29,7 +29,7 @@ namespace ChatterBox.DataLayer.RawSQL
             _messagesRepository = messagesRepository ?? new MessagesRepository(_connectionString, _usersRepository, _attachsRepository, this);
         }
 
-        public Chat Create(string title, IEnumerable<Guid> members, string picture = null)
+        public Chat Create(string title, IEnumerable<Guid> members, byte[] picture = null)
         {
             if (title.IsEmpty())
             {
@@ -64,11 +64,11 @@ namespace ChatterBox.DataLayer.RawSQL
                     using (var command = connection.CreateCommand())
                     {
                         command.Transaction = transaction;
-                        command.CommandText = "INSERT INTO Chats (ChatId, Title, PicturePath) VALUES (@id, @title, @pic)";
+                        command.CommandText = "INSERT INTO Chats (ChatId, Title, Picture) VALUES (@id, @title, @pic)";
 
                         command.Parameters.AddWithValue("@id", chat.Id);
                         command.Parameters.AddWithValue("@title", chat.Title);
-                        command.Parameters.AddWithValue("@pic", chat.Picture ?? String.Empty);
+                        command.Parameters.AddWithValue("@pic", chat.Picture);
 
                         command.ExecuteNonQuery();
                     }
@@ -153,7 +153,7 @@ namespace ChatterBox.DataLayer.RawSQL
                         {
                             Id = reader.GetGuid(reader.GetOrdinal("ChatId")),
                             Title = reader.GetString(reader.GetOrdinal("Title")),
-                            Picture = reader.GetString(reader.GetOrdinal("PicturePath")),
+                            Picture = reader.GetSqlBinary(reader.GetOrdinal("Picture")).Value,
                             Members = GetChatUsers(reader.GetGuid(reader.GetOrdinal("ChatId"))),
                             Messages = GetChatMessages(reader.GetGuid(reader.GetOrdinal("ChatId"))),
                             Attachs = GetChatAttachs(reader.GetGuid(reader.GetOrdinal("ChatId")))
@@ -227,7 +227,7 @@ namespace ChatterBox.DataLayer.RawSQL
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT * FROM Attachs a INNER JOIN Messages m ON " +
+                    command.CommandText = "SELECT AttachId FROM Attachs a INNER JOIN Messages m ON " +
                                           "a.MessageId = m.MessageId WHERE m.ChatId = @id";
                     command.Parameters.AddWithValue("@id", id);
                     using (var reader = command.ExecuteReader())
@@ -294,7 +294,7 @@ namespace ChatterBox.DataLayer.RawSQL
             }
         }
 
-        public void ChangePicture(Guid id, string newPath)
+        public void ChangePicture(Guid id, byte[] newPicture)
         {
             if (!ChatExists(id))
             {
@@ -310,8 +310,8 @@ namespace ChatterBox.DataLayer.RawSQL
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "UPDATE Chats SET PicturePath = @pic WHERE ChatId = @id";
-                    command.Parameters.AddWithValue("@pic", newPath);
+                    command.CommandText = "UPDATE Chats SET Picture = @pic WHERE ChatId = @id";
+                    command.Parameters.AddWithValue("@pic", newPicture);
                     command.Parameters.AddWithValue("@id", id);
                     command.ExecuteNonQuery();
                 }
@@ -374,6 +374,24 @@ namespace ChatterBox.DataLayer.RawSQL
                 {
                     Content = new StringContent("Не выбраны пользователи"),
                     ReasonPhrase = "Wrong Chat Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
+            if (!members.All(m => _usersRepository.UserExists(m)))
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Один или несколько пользователей не существуют"),
+                    ReasonPhrase = "Wrong User Arguments"
+                };
+                throw new HttpResponseException(resp);
+            }
+            if (!members.All(m => GetChatUsers(id).Any(u => u.Id == m)))
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Один или несколько пользователей не состоят в чате"),
+                    ReasonPhrase = "Wrong User Arguments"
                 };
                 throw new HttpResponseException(resp);
             }

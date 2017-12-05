@@ -9,7 +9,7 @@
         /// <summary>
         /// Аватарка пользователя
         /// </summary>
-        public string Picture { get; set; }
+        public byte[] Picture { get; set; }
         /// <summary>
         /// Логин для входа в систему
         /// </summary>

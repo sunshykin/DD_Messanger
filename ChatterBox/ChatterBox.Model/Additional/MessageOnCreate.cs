@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace ChatterBox.Model.Additional
 {
@@ -20,7 +21,7 @@ namespace ChatterBox.Model.Additional
         /// <summary>
         /// Прикрепленные к сообщению файлы
         /// </summary>
-        public IEnumerable<string> Files { get; set; }
+        public IEnumerable<File> Files { get; set; }
         /// <summary>
         /// Состояние самоуничтожения сообщения
         /// </summary>

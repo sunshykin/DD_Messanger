@@ -38,7 +38,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttachExtentions.cs" />
     <Compile Include="StringExtentions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ChatterBox.Model\ChatterBox.Model.csproj">
+      <Project>{B144D466-B2D4-4FAC-81A8-33BF0D512EEA}</Project>
+      <Name>ChatterBox.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

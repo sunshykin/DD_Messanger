@@ -18,7 +18,7 @@ namespace ChatterBox.Api
         {
             var Log = LogManager.GetCurrentClassLogger();
             Log.Debug("Запрос пришел на сервер.");
-            var response = await base.SendAsync(request, cancellationToken);
+            var response = base.SendAsync(request, cancellationToken).Result;
             if (response.IsSuccessStatusCode)
                 Log.Debug("Ответ ушел клиенту.");
             else

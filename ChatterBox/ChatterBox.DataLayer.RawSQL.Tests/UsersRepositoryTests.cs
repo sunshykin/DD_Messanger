@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using ChatterBox.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,10 +10,15 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
     [TestClass]
     public class UsersRepositoryTests
     {
-        private const string ConnectionString = @"Data Source=DESKTOP-C09EP1V\SQLEXPRESS;Initial Catalog=MessengerBase;Integrated Security=True;";
+        private readonly string ConnectionString;
 
         private readonly List<Guid> _tempUsers = new List<Guid>();
         private readonly List<Guid> _tempChats = new List<Guid>();
+
+        public UsersRepositoryTests()
+        {
+            ConnectionString = ConfigurationManager.ConnectionStrings["ChatterBase"].ConnectionString;
+        }
 
         [TestMethod]
         public void ShouldCreateUser()
@@ -21,7 +27,7 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             var user = new User
             {
                 Name = "testUser",
-                Picture = "\\pic\\temp.jpg"
+                Picture = new byte[] {}
             };
             var login = "testUser";
             var password = "qwerty123";
@@ -45,7 +51,7 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             var user = new User
             {
                 Name = "testUser",
-                Picture = "\\pic\\temp.jpg"
+                Picture = new byte[] {}
             };
             var login = "testUser";
             var password = "qwerty123";
@@ -68,7 +74,7 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             var user = new User
             {
                 Name = "testUser",
-                Picture = "\\pic\\temp.jpg"
+                Picture = new byte[] {}
             };
             var login = "testUser";
             var password = "qwerty123";
@@ -108,7 +114,7 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             var user = new User
             {
                 Name = "testUser",
-                Picture = "\\pic\\temp.jpg"
+                Picture = new byte[] {}
             };
             var login = "testUser";
             var password = "qwerty123";
@@ -131,7 +137,7 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             var user = new User
             {
                 Name = "testUser",
-                Picture = "\\pic\\temp.jpg"
+                Picture = new byte[] {}
             };
             var login = "testUser";
             var password = "qwerty123";
@@ -154,7 +160,7 @@ namespace ChatterBox.DataLayer.RawSQL.Tests
             var user = new User
             {
                 Name = "testUser",
-                Picture = "\\pic\\temp.jpg"
+                Picture = new byte[] {}
             };
             var login = "testUser1";
             var password = "qwerty123";
